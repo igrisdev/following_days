@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,40 +12,93 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTaskStore } from "@/store/TaskStore";
+import { nanoid } from "nanoid";
 
-export function DialogDemo() {
+export function TaskDialog() {
+  const addTask = useTaskStore((state) => state.addTask);
+
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState<
+    "dailyGoals" | "shortTermTasks" | "ongoingCommitments"
+  >("dailyGoals");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!title.trim()) return;
+
+    const newTask = {
+      id: nanoid(),
+      title: title.trim(),
+      createdAt: new Date().toISOString(),
+      completed: false,
+    };
+
+    addTask(category, newTask);
+    setTitle("");
+  };
+
   return (
     <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Button variant="outline">Crear</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+      <DialogTrigger asChild>
+        <Button variant="outline">Crear</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Actividad</DialogTitle>
+            <DialogTitle>Nueva Actividad</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
+              Escribe el nombre de tu tarea y selecciona su categoría.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="name-1">Name</Label>
-              <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="title">Título</Label>
+              <Input
+                id="title"
+                placeholder="Escribe tu tarea"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
             </div>
-            <div className="grid gap-3">
-              <Label htmlFor="username-1">Username</Label>
-              <Input id="username-1" name="username" defaultValue="@peduarte" />
+            <div className="grid gap-2">
+              <Label htmlFor="category">Categoría</Label>
+              <select
+                id="category"
+                className="border rounded px-3 py-2"
+                value={category}
+                onChange={(e) =>
+                  setCategory(
+                    e.target.value as
+                      | "dailyGoals"
+                      | "shortTermTasks"
+                      | "ongoingCommitments"
+                  )
+                }
+              >
+                <option value="dailyGoals">Objetivos del día</option>
+                <option value="shortTermTasks">
+                  Responsabilidades a corto plazo
+                </option>
+                <option value="ongoingCommitments">
+                  Compromisos continuos
+                </option>
+              </select>
             </div>
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" type="button">
+                Cancelar
+              </Button>
             </DialogClose>
-            <Button type="submit">Save changes</Button>
+            <DialogClose asChild>
+              <Button type="submit">Crear</Button>
+            </DialogClose>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

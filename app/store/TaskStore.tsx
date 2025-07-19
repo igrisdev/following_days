@@ -17,6 +17,7 @@ type TaskStore = {
   addTask: (category: TaskCategory, task: Task) => void;
   toggleTask: (category: TaskCategory, taskId: string) => void;
   removeTask: (category: TaskCategory, taskId: string) => void;
+  removeAllTasks: () => void;
 };
 
 export const useTaskStore = create<TaskStore>()(
@@ -48,6 +49,14 @@ export const useTaskStore = create<TaskStore>()(
           tasks: {
             ...state.tasks,
             [category]: state.tasks[category].filter((t) => t.id !== taskId),
+          },
+        })),
+      removeAllTasks: () =>
+        set((state) => ({
+          tasks: {
+            dailyGoals: [],
+            shortTermTasks: [],
+            ongoingCommitments: [],
           },
         })),
     }),
