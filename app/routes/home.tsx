@@ -10,16 +10,16 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <>
-      <header>
+    <div className="grid grid-rows-3 h-screen">
+      <header className="">
         <h1>Following Days</h1>
       </header>
-      <main>
+      <main className="">
         <DialogDemo />
       </main>
       <footer>
         <p>This is the footer.</p>
       </footer>
-    </>
+    </div>
   );
 }
